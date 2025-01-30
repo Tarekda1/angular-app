@@ -12,7 +12,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Checkout the code from Git
-                git branch: 'main', url: 'https://github.com/your-repo/angular-app.git'
+                git branch: 'main', url: 'https://github.com/Tarekda1/angular-app.git'
             }
         }
 
