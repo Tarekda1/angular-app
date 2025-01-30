@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+      agent {
+        docker {
+            image 'node:16' // Use an official Node.js Docker image
+        }
+    }
 
     environment {
         DOCKER_IMAGE = 'tare2da/angular-app'
