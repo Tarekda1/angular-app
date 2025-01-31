@@ -15,8 +15,9 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Checkout the code from Git
-                git branch: 'main', url: 'https://github.com/Tarekda1/angular-app.git'
+                    git branch: 'main',
+                        url: 'git@github.com:Tarekda1/angular-app.git',
+                        credentialsId: 'github-ssh-key'
             }
         }
 
