@@ -13,13 +13,21 @@ pipeline {
     }
 
     stages {
+        
         stage('Checkout') {
             steps {
-                sshagent(['github-ssh-key']) {
-                    script {
-                        git branch: 'main',
+                sshagent(['github-ssh-key']) { // Assuming 'github-ssh-key' is your SSH key credential ID
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: '*/main']], // Or specify a branch like '*/main', '*/develop'
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: [],
+                        submoduleCfg: [],
+                        userRemoteConfigs: [[
+                            credentialsId: 'github-ssh-key', // Same credential ID as sshagent
                             url: 'git@github.com:Tarekda1/angular-app.git'
-                    }
+                        ]]
+                    ])
                 }
             }
         }
