@@ -13,7 +13,7 @@ pipeline {
     }
 
     stages {
-        
+
         stage('Checkout') {
             steps {
                 sshagent(['github-ssh-key']) { // Assuming 'github-ssh-key' is your SSH key credential ID
@@ -38,7 +38,7 @@ pipeline {
                     // Install dependencies and build the Angular app
                     sh 'npm install'
                     sh 'npm run build -- --prod'
-                }
+                }`
             }
         }
 
