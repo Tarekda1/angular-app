@@ -15,9 +15,12 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                    git branch: 'main',
-                        url: 'git@github.com:Tarekda1/angular-app.git',
-                        credentialsId: 'github-ssh-key'
+                sshagent(['github-ssh-key']) {
+                    script {
+                        git branch: 'main',
+                            url: 'git@github.com:Tarekda1/angular-app.git'
+                    }
+                }
             }
         }
 
