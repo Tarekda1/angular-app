@@ -8,7 +8,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'tare2da/angular-app'
         DOCKER_TAG = "v${BUILD_NUMBER}"
-        STAGING_SERVER = '216.215.105.13'
+        STAGING_SERVER = '216.215.105.137'
         STAGING_USER = 'tdaaboul'
     }
 
