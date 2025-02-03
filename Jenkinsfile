@@ -1,7 +1,7 @@
 pipeline {
-      agent {
+   agent {
         docker {
-            image 'node:20' // Use an official Node.js Docker image
+            image 'tare2da/custom-node-docker:latest'
         }
     }
 
@@ -32,6 +32,13 @@ pipeline {
             }
         }
 
+        stage('Verify Node.js Version') {
+            steps {
+                sh 'node --version'
+                sh 'npm --version'
+            }
+        }
+        
         stage('Build Angular App') {
             steps {
                 script {
