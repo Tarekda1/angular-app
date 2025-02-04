@@ -71,16 +71,6 @@ pipeline {
             }
         }
 
-        stage('Debug SSH Agent') {
-            steps {
-                script {
-                    sshagent(['staging-server-ssh-key']) {
-                        sh 'ssh-add -l' // List loaded SSH keys
-                    }
-                }
-            }
-        }
-
         stage('Deploy to Staging Server') {
             steps {
                 script {
