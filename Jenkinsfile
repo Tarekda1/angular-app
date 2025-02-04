@@ -72,13 +72,29 @@ pipeline {
                 script {
                     sshagent(['staging-server-ssh-key']) {
                         sh """
-                            ssh -o StrictHostKeyChecking=no ${STAGING_USER}@${STAGING_SERVER} << EOF
-                                docker pull ${DOCKER_IMAGE}:${DOCKER_TAG}
-                                docker stop angular-app || true
-                                docker rm angular-app || true
-                                docker run -d --name angular-app -p 80:80 ${DOCKER_IMAGE}:${DOCKER_TAG}
-                            EOF
-                        """
+                    ssh -o StrictHostKeyChecking=no ${STAGING_USER}@${STAGING_SERVER} << EOF
+                        # 1. Verify Docker context (important!)
+                        docker context ls  # List available contexts (if using Docker contexts)
+                        docker context use default # Or the context you want to use
+                        docker info # Check Docker version and platform on remote server
+
+                        # 2. Pull the image (with error handling)
+                        if ! docker pull ${DOCKER_IMAGE}:${DOCKER_TAG}; then
+                            echo "Error: Failed to pull image ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                            exit 1  # Fail the Jenkins job
+                        fi
+
+                        # 3. Stop and remove the container (ignore errors)
+                        docker stop angular-app || true
+                        docker rm angular-app || true
+
+                        # 4. Run the container (with explicit platform if needed)
+                        docker run -d --name angular-app -p 80:80 ${DOCKER_IMAGE}:${DOCKER_TAG} # Or the correct port mapping
+
+                        # 5. Verify container is running
+                        docker ps
+                    EOF
+                """
                     }
                 }
             }
