@@ -13,9 +13,9 @@ pipeline {
     }
 
     stages {
-        stage('Clean Workspace') {
+      stage('Clean Workspace') {
             steps {
-                cleanWs() // Clear the workspace before starting
+                sh 'rm -rf *'
             }
         }
 
