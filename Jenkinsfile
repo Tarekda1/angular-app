@@ -1,7 +1,7 @@
 pipeline {
     agent {
         docker {
-            image 'tare2da/custom-node-docker:latest' // Custom image with Node.js and Docker CLI
+            image 'tare2da/custom-node-docker:latest' // Ensure Git is installed in this image
         }
     }
 
@@ -13,20 +13,11 @@ pipeline {
     }
 
     stages {
-      stage('Clean Workspace') {
-            steps {
-                sh 'rm -rf *'
-            }
-        }
-
         stage('Checkout') {
             steps {
-                sshagent(['github-ssh-key']) {
-                    script {
-                        git branch: 'main',
-                            url: 'git@github.com:Tarekda1/angular-app.git'
-                    }
-                }
+                git branch: 'main',
+                    url: 'git@github.com:Tarekda1/angular-app.git',
+                    credentialsId: 'github-ssh-key' // Use credentialsId for SSH key
             }
         }
 
@@ -70,7 +61,7 @@ pipeline {
                 script {
                     sshagent(['staging-server-ssh-key']) {
                         sh """
-                            ssh ${STAGING_USER}@${STAGING_SERVER} << EOF
+                            ssh -o StrictHostKeyChecking=no ${STAGING_USER}@${STAGING_SERVER} << EOF
                                 docker pull ${DOCKER_IMAGE}:${DOCKER_TAG}
                                 docker stop angular-app || true
                                 docker rm angular-app || true
