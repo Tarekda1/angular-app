@@ -1,19 +1,18 @@
 pipeline {
-   agent {
+    agent {
         docker {
-            image 'tare2da/custom-node-docker:latest'
+            image 'tare2da/custom-node-docker:latest' // Custom image with Node.js and Docker CLI
         }
     }
 
     environment {
         DOCKER_IMAGE = 'tare2da/angular-app'
         DOCKER_TAG = "v${BUILD_NUMBER}"
-        STAGING_SERVER = '216.215.105.137'
+        STAGING_SERVER = '216.215.105.13'
         STAGING_USER = 'tdaaboul'
     }
 
     stages {
-
         stage('Clean Workspace') {
             steps {
                 cleanWs() // Clear the workspace before starting
@@ -22,18 +21,11 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                sshagent(['github-ssh-key']) { // Assuming 'github-ssh-key' is your SSH key credential ID
-                    checkout([
-                        $class: 'GitSCM',
-                        branches: [[name: '*/main']], // Or specify a branch like '*/main', '*/develop'
-                        doGenerateSubmoduleConfigurations: false,
-                        extensions: [],
-                        submoduleCfg: [],
-                        userRemoteConfigs: [[
-                            credentialsId: 'github-ssh-key', // Same credential ID as sshagent
+                sshagent(['github-ssh-key']) {
+                    script {
+                        git branch: 'main',
                             url: 'git@github.com:Tarekda1/angular-app.git'
-                        ]]
-                    ])
+                    }
                 }
             }
         }
@@ -44,13 +36,12 @@ pipeline {
                 sh 'npm --version'
             }
         }
-        
+
         stage('Build Angular App') {
             steps {
                 script {
-                    // Install dependencies and build the Angular app
                     sh 'npm install'
-                    sh 'npm run build --prod'
+                    sh 'npm run build -- --prod'
                 }
             }
         }
@@ -58,7 +49,6 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Build the Docker image
                     sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
                 }
             }
@@ -67,11 +57,9 @@ pipeline {
         stage('Push Docker Image') {
             steps {
                 script {
-                    // Log in to Docker Hub (or your container registry)
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
                     }
-                    // Push the Docker image to Docker Hub
                     sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
                 }
             }
@@ -80,7 +68,6 @@ pipeline {
         stage('Deploy to Staging Server') {
             steps {
                 script {
-                    // SSH into the staging server and pull/run the latest Docker image
                     sshagent(['staging-server-ssh-key']) {
                         sh """
                             ssh ${STAGING_USER}@${STAGING_SERVER} << EOF
