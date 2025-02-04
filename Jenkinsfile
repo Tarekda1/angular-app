@@ -14,6 +14,12 @@ pipeline {
 
     stages {
 
+        stage('Clean Workspace') {
+            steps {
+                cleanWs() // Clear the workspace before starting
+            }
+        }
+
         stage('Checkout') {
             steps {
                 sshagent(['github-ssh-key']) { // Assuming 'github-ssh-key' is your SSH key credential ID
