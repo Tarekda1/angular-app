@@ -56,6 +56,14 @@ pipeline {
             }
         }
 
+        stage('Test SSH') {
+            steps {
+                sshagent(['staging-server-ssh-key']) {
+                sh "ssh -o StrictHostKeyChecking=no ${STAGING_USER}@${STAGING_SERVER} 'echo Success!'"
+                }
+            }
+        }
+
         stage('Deploy to Staging Server') {
             steps {
                 script {
