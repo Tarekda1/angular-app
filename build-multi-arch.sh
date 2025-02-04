@@ -1,22 +1,24 @@
 #!/bin/bash
 
-IMAGE_NAME="${DOCKER_IMAGE}" # Or specify it here
+IMAGE_NAME="${DOCKER_IMAGE}"
 IMAGE_TAG="${DOCKER_TAG}"
 
-# 1. Build for amd64 (your staging server's architecture)
-docker build --platform linux/amd64  -t "${IMAGE_NAME}:${IMAGE_TAG}" .
+# 1. Initialize buildx for multi-architecture builds
+docker buildx create --use --name multiarch-builder || true
 
-# 2. Build for other architectures if needed (e.g., arm64)
-# docker build -t "${IMAGE_NAME}:${IMAGE_TAG}-arm64" .
+# 2. Build and push for linux/amd64 explicitly
+docker buildx build \
+    --platform linux/amd64 \           # Target staging server's architecture
+    -t "${IMAGE_NAME}:${IMAGE_TAG}" \
+    --push \                           # Push directly to registry
+    .                                  # Build context
 
-# 3. Create and push the manifest (important!)
-#docker manifest create "${IMAGE_NAME}:${IMAGE_TAG}" \
-#    --amend "${IMAGE_NAME}:${IMAGE_TAG}-amd64" \
-    # --amend "${IMAGE_NAME}:${IMAGE_TAG}-arm64"  # Uncomment if you built for arm64
+# 3. (Optional) For true multi-architecture support, add more platforms:
+# docker buildx build \
+#     --platform linux/amd64,linux/arm64 \
+#     -t "${IMAGE_NAME}:${IMAGE_TAG}" \
+#     --push \
+#     .
 
-#docker manifest push "${IMAGE_NAME}:${IMAGE_TAG}"
-
-docker  push "${IMAGE_NAME}:${IMAGE_TAG}"
-
-# 4. (Optional) Inspect the manifest
+# 4. Verify manifest (should show amd64 now)
 docker manifest inspect "${IMAGE_NAME}:${IMAGE_TAG}"
