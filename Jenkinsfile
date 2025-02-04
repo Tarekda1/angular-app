@@ -75,7 +75,7 @@ pipeline {
             steps {
                 script {
                     // SSH into the staging server and pull/run the latest Docker image
-                    sshagent(['github-ssh-key']) {
+                    sshagent(['id_rsa_jenkins_deployment']) {
                         sh """
                             ssh ${STAGING_USER}@${STAGING_SERVER} << EOF
                                 docker pull ${DOCKER_IMAGE}:${DOCKER_TAG}
