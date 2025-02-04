@@ -59,7 +59,10 @@ pipeline {
         stage('Test SSH') {
             steps {
                 sshagent(['staging-server-ssh-key']) {
-                sh "ssh -o StrictHostKeyChecking=no ${STAGING_USER}@${STAGING_SERVER} 'echo Success!'"
+                    sh 'ls -la /var/jenkins_home/workspace/angular-pipeline@tmp/'
+                    // Debug: List keys in the SSH agent
+                    sh 'ssh-add -l'
+                    sh "ssh -o StrictHostKeyChecking=no ${STAGING_USER}@${STAGING_SERVER} 'echo Success!'"
                 }
             }
         }
