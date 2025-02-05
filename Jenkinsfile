@@ -40,7 +40,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    def imageName = "${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    //def imageName = "${DOCKER_IMAGE}:${DOCKER_TAG}"
 
                     // 1. Check the builder platform (important!)
                     sh 'echo "Building on platform: $(uname -m)"'
