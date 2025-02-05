@@ -40,7 +40,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    //def imageName = "${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    def imageName = "${DOCKER_IMAGE}:${DOCKER_TAG}"
 
                     // 1. Check the builder platform (important!)
                     sh 'echo "Building on platform: $(uname -m)"'
@@ -48,6 +48,7 @@ pipeline {
                     // 2. Build for the correct architecture (if you know it)
                     // If your Jenkins agent is on the same platform as your staging server:
                     // sh "docker build -t ${imageName} ."
+                    //sh "docker buildx build --platform linux/amd64 -t $imageName ."
 
                     // 3. Multi-architecture build (recommended)
                     // Use a separate build script for more complex multi-arch builds
