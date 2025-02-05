@@ -8,10 +8,10 @@ docker buildx create --use --name multiarch-builder || true
 
 # 2. Build and push for linux/amd64 explicitly
 docker buildx build \
-    --platform linux/amd64 \           # Target staging server's architecture
+    --platform linux/amd64 \
     -t "${IMAGE_NAME}:${IMAGE_TAG}" \
-    --push \                           # Push directly to registry
-    .                                  # Build context
+    --push \
+    .
 
 # 3. (Optional) For true multi-architecture support, add more platforms:
 # docker buildx build \
