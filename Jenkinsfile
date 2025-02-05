@@ -37,33 +37,33 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    //def imageName = "${DOCKER_IMAGE}:${DOCKER_TAG}"
+        // stage('Build Docker Image') {
+        //     steps {
+        //         script {
+        //             //def imageName = "${DOCKER_IMAGE}:${DOCKER_TAG}"
 
-                    // 1. Check the builder platform (important!)
-                    sh 'echo "Building on platform: $(uname -m)"'
+        //             // 1. Check the builder platform (important!)
+        //             sh 'echo "Building on platform: $(uname -m)"'
 
-                    // 2. Build for the correct architecture (if you know it)
-                    // If your Jenkins agent is on the same platform as your staging server:
-                    // sh "docker build -t ${imageName} ."
-                    //sh "docker buildx build --platform linux/amd64 -t $imageName ."
+        //             // 2. Build for the correct architecture (if you know it)
+        //             // If your Jenkins agent is on the same platform as your staging server:
+        //             // sh "docker build -t ${imageName} ."
+        //             //sh "docker buildx build --platform linux/amd64 -t $imageName ."
 
-                    // 3. Multi-architecture build (recommended)
-                    // Use a separate build script for more complex multi-arch builds
-                    sh './build-multi-arch.sh' // See the script below
-                }
-            }
-        }
+        //             // 3. Multi-architecture build (recommended)
+        //             // Use a separate build script for more complex multi-arch builds
+        //             sh './build-multi-arch.sh' // See the script below
+        //         }
+        //     }
+        // }
 
-        stage('Push Docker Image') {
+        stage('build and Push Docker Image') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         sh "echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin"
                     }
-                    sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                    sh './build-multi-arch.sh' 
                 }
             }
         }
