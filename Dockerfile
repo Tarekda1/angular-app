@@ -9,5 +9,5 @@ RUN npm run build --omit=dev
 # Stage 2: Serve the Angular app with Nginx
 FROM nginx:alpine
 COPY --from=build-stage /app/dist/first-angular-app/browser  /usr/share/nginx/html
-EXPOSE 8082
+EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
