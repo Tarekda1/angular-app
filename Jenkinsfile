@@ -81,7 +81,7 @@ docker stop angular-app || true
 docker rm angular-app || true
 
 # 4. Run the container (with explicit platform if needed)
-docker run -d --name angular-app -p 8282:80 ${DOCKER_IMAGE}:${DOCKER_TAG} # Or the correct port mapping
+docker run -d --name angular-app -p 8282:8282 ${DOCKER_IMAGE}:${DOCKER_TAG} # Or the correct port mapping
 
 # 5. Verify container is running
 docker ps
