@@ -1,14 +1,24 @@
-version: '3.8'
 services:
   angular:
     container_name: test-angular-app
-    image: test-angular-app
     build:
       context: .
-      dockerfile: Dockerfile
+      target: development
     ports:
-      - "8585:8282"
+      - "8585:4200"  # Angular dev server typically uses 4200
+    profiles: ["dev"]
     volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-    command: npx ng serve --host 0.0.0.0 --disable-host-check
+      - .:/app
+      - /app/node_modules
+    command: ["npm", "start"]
+    # Remove depends_on: webserver if not needed
+
+  webserver:
+    container_name: prod-angular-app
+    build:
+      context: .
+      target: production  # Target the Nginx stage
+    ports:
+      - "8585:8282"  # Host:Container port mapping
+    profiles: ["prod"]
+    # Remove volumes that overwrite /usr/share/nginx/html
